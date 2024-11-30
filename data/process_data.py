@@ -1,3 +1,5 @@
+'''Importing required libraries for data processing'''
+
 import sys
 import pandas as pd
 import numpy as np
@@ -45,7 +47,7 @@ def clean_data(df):
     category_colnames = list(row.apply(lambda x: x[:-2]))
     categories.columns = category_colnames
 
-    # iterate through the category columns to keep only the last character in the string  (the number)
+    # iterate through the category columns to keep only the last character in the string
     for column in categories:
         # set each value to be the last character of the string
         categories[column] = categories[column].apply(lambda x: x[-1])

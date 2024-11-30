@@ -7,6 +7,12 @@ import pickle
 import pandas as pd
 
 # Import nltk libraries for langauge processing
+import nltk
+nltk.download('stopwords')
+nltk.download('punkt')
+nltk.download('punkt_tab')
+nltk.download('wordnet')
+nltk.download('omw-1.4')
 from nltk.corpus import stopwords
 from nltk.stem.wordnet import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
@@ -20,7 +26,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.multioutput import MultiOutputClassifier
-from sklearn.metrics import classification_report
+from sklearn.metrics import classification_report, accuracy_score
 
 
 def load_data(database_filepath):
@@ -99,14 +105,35 @@ def build_model():
 
 def evaluate_model(model, x_test, y_test, category_names):
     '''
-    This function 
+    This function evaluates our model using classification_report on several key metrics.
+    There is no return value, however this model evaluation will allow us to track our progress.
     '''
-    y_pred = model.predict(x_test)
 
+    # Make predictions, initialize empty list for accuracy results
+    y_pred = model.predict(x_test)
+    results = []
+
+
+    #Iterate through the features to track our prediction accuracy
     for column in category_names:
         print(f"Metrics for {column}:")
         print(classification_report(y_test[column], y_pred[:, y_test.columns.get_loc(column)]))
         print("="*50)
+
+        #Calculate accuracy and store it
+        accuracy = accuracy_score(y_test[column], y_pred[:, y_test.columns.get_loc(column)])
+
+        # Create separate table for accuracy scores to visualize later
+        results.append({
+            'Feature' : column,
+            'Accuracy': accuracy
+        })
+
+    accuracy_df = pd.DataFrame(results)
+
+    # create sqlite engine and save table to database for later usage
+    engine = create_engine('sqlite:///../data/DisasterResponse.db')
+    accuracy_df.to_sql('model_accuracy', engine, if_exists='replace', index=False)
 
 
 def save_model(model, model_filepath):
