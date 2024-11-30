@@ -1,4 +1,4 @@
 models/classifier.pkl
 app/classifier.pkl
-DS_Store
+.DS_Store
 app/Testing.ipynb
