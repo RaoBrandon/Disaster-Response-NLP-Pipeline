@@ -1,5 +1,5 @@
 # Disaster-Response-NLP-Pipeline
-![Disaster Response Application](@/app/templates/App Screenshot.png)
+![Disaster Response Application](app/templates/screenshot.png)
 
 
 ## Project Summary
