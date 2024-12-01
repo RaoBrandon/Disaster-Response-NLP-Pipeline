@@ -3,7 +3,6 @@
 import json
 import plotly
 import pandas as pd
-import os
 
 # NLTK libraries for language processing
 from nltk.stem import WordNetLemmatizer
@@ -74,7 +73,7 @@ def index():
     # Save features and accuracy values for plotting
     feature_names = accuracy.Feature
     feature_accuracy = accuracy.Accuracy
-    
+
     # Create visuals
     graphs = [
         {
