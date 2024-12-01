@@ -11,7 +11,7 @@ from nltk.tokenize import word_tokenize
 
 # Import flask libraries for application deployment
 from flask import Flask
-from flask import render_template, request, jsonify
+from flask import render_template
 from plotly.graph_objs import Bar, Heatmap
 import joblib
 from sqlalchemy import create_engine
@@ -19,10 +19,24 @@ from sqlalchemy import create_engine
 app = Flask(__name__)
 
 def tokenize(text):
+    '''
+    This function takes in a text string and normalizes, tokenizes and lemmatizes it for processing.
+
+    Args:
+        text - raw text, needs to be cleaned for further processing
+
+    Returns:
+    
+        tokens - python list of cleaned, tokenized and lemmatized text for easy processing
+    '''
+
+    # Turn text into tokenized words
     tokens = word_tokenize(text)
     lemmatizer = WordNetLemmatizer()
 
     clean_tokens = []
+
+    # Lemmatize tokens
     for tok in tokens:
         clean_tok = lemmatizer.lemmatize(tok).lower().strip()
         clean_tokens.append(clean_tok)
@@ -41,9 +55,16 @@ model = joblib.load("../models/classifier.pkl")
 @app.route('/')
 @app.route('/index')
 def index():
+    '''
+    This function builds a JSON configuration of Python visualizations and renders
+    an interactive webpage to showcase these visualizations on the main page.
+
+    Returns:
+        webpage - an interactive webapp that allows for input and categorization
+        of messages as well as the showcase of 3 prebuilt Python visualizations.
+    '''
 
     # extract data needed for visuals
-    # TODO: Below is an example - modify to extract data for your own visuals
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
 
@@ -54,10 +75,10 @@ def index():
     feature_names = accuracy.Feature
     feature_accuracy = accuracy.Accuracy
     
-    # create visuals
-    # TODO: Below is an example - modify to create your own visuals
+    # Create visuals
     graphs = [
         {
+            # Create bar chart for genre distributions
             'data': [
                 Bar(
                     x=genre_names,
@@ -80,11 +101,12 @@ def index():
             }
         },
         {
+            # Create heatmap for feature correlations
             'data': [
                 Heatmap(
-                    z=corr_matrix.values,       # Correlation values
-                    x=corr_matrix.columns,      # Column names
-                    y=corr_matrix.index, 
+                    z=corr_matrix.values,
+                    x=corr_matrix.columns,
+                    y=corr_matrix.index,
                     colorscale = 'YlGnBu',
                     colorbar = dict(title = 'Correlation')
                 )
@@ -101,6 +123,7 @@ def index():
             }
         },
         {
+            # Create horizontal bar chart for feature accuracy ratings
             'data': [
                 Bar(
                     x=feature_accuracy,
@@ -138,6 +161,13 @@ def index():
 # web page that handles user query and displays model results
 @app.route('/go')
 def go():
+    '''
+    This function renders interactible components of webpage, allowing a user
+    to input a message to be categorized into one of 36 emergency categories.
+
+    Returns:
+        rendered html file - this rendering allows for users to see 
+    '''
     # save user input in query
     query = request.args.get('query', '') 
 
@@ -154,6 +184,8 @@ def go():
 
 
 def main():
+    '''Launch instance of Flask application
+    '''
     app.run(host='0.0.0.0', port=3001, debug=True)
 
 
