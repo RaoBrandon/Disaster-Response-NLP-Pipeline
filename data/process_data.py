@@ -2,7 +2,6 @@
 
 import sys
 import pandas as pd
-import numpy as np
 from sqlalchemy import create_engine
 
 def load_data(messages_filepath, categories_filepath):
@@ -51,7 +50,7 @@ def clean_data(df):
     for column in categories:
         # set each value to be the last character of the string
         categories[column] = categories[column].apply(lambda x: x[-1])
-        
+   
         # convert column from string to numeric
         categories[column] = categories[column].astype(int)
 
@@ -61,7 +60,10 @@ def clean_data(df):
 
     # concatenate the original dataframe with the new `categories` dataframe
     df = pd.concat([df, categories], axis = 1)
-    
+
+    # filtering the dataframe to only consider rows that are classified either 0 or 1
+    df = df[df.iloc[:, 5:].isin([0, 1]).all(axis=1)]
+
     # drop duplicates
     df = df.drop_duplicates()
     df = df.loc[:,~df.columns.duplicated()]

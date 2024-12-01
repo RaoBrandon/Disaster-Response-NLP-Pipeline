@@ -5,6 +5,23 @@
 ## Project Summary
 This repo contains a Udacity Data Science project that categorizes messages for disaster response purposes through the building, training and implementation of an end-to-end NLP (Natural Language Processing) pipeline along with a companion Flask application. There are several visualizations pre-loaded into the webpage for demonstration purposes.
 
+
+## Files In This repository
+- app
+    - templates
+        - go.html -- html page loading several components of main page
+        - master.html -- main html page loading majority of app components including visualizations
+        - screenshot.png -- sample screenshot of successful app launch
+    - run.py -- python script that launches Flask application
+- data
+    - disaster_categories.csv -- CSV file containing message categorizations
+    - disaster_messages.csv -- CSV file scontaining disaster messages for categorization
+    - DisasterResponse.db -- Database file that is generated from process_data.py for reference tables
+    - process_data.py -- python script that cleans data to prep for model training
+- models
+    - train_classifier.py -- python script that builds, trains, evaluates and saves a model
+- README.md - documentation .. this file :)
+
 ## Prerequisites
 In order to run this application, several installations must be complete upon executing the script "run.py":
 

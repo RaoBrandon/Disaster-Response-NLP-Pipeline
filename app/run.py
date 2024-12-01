@@ -10,7 +10,7 @@ from nltk.tokenize import word_tokenize
 
 # Import flask libraries for application deployment
 from flask import Flask
-from flask import render_template
+from flask import render_template, request
 from plotly.graph_objs import Bar, Heatmap
 import joblib
 from sqlalchemy import create_engine

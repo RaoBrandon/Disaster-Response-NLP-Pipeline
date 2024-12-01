@@ -21,10 +21,10 @@ from nltk.tokenize import word_tokenize
 from sqlalchemy import create_engine
 
 # Importing sklearn libraries for ML classification
+from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.pipeline import Pipeline
-from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.multioutput import MultiOutputClassifier
 from sklearn.metrics import classification_report, accuracy_score
 
@@ -80,7 +80,7 @@ def tokenize(text):
     return tokens
 
 
-def build_model():
+def build_model(X_train, Y_train):
     '''
     This function intakes no parameters and simply returns an initialized pipeline leveraging
     a random forest classifier in combination with multi output classifier as suggested.
@@ -95,12 +95,24 @@ def build_model():
 
     # Intantiate and return model for training, leveraging multi output classifier
     rf_pipeline = Pipeline([
-        ('vect', CountVectorizer(tokenizer=tokenize)),
+        ('vect', CountVectorizer(tokenizer=tokenize, token_pattern=None)),
         ('tfidf', TfidfTransformer()),
         ('clf', MultiOutputClassifier(RandomForestClassifier()))
     ])
 
-    return rf_pipeline
+    # Now, we will perform a Grid Search Cross Validation to optimize our model
+    parameters = {
+    'clf__estimator__n_estimators': [10, 20, 30],
+    'clf__estimator__max_depth': [5, 25, 50]
+    }
+
+    cv = GridSearchCV(rf_pipeline, parameters)
+
+    # Fit the grid search on the data and determine the best model, then return it
+    cv.fit(X_train, Y_train)
+    best_model = cv.best_estimator_
+
+    return best_model
 
 
 def evaluate_model(model, x_test, y_test, category_names):
@@ -165,7 +177,7 @@ def main():
         X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2)
 
         print('Building model...')
-        model = build_model()
+        model = build_model(X_train, Y_train)
 
         print('Training model...')
         model.fit(X_train, Y_train)
